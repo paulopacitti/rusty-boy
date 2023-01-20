@@ -43,6 +43,39 @@ impl CPU {
             }
             0x3C => self.registers.a = self.inc(self.registers.a),
             0x3D => self.registers.a = self.dec(self.registers.a),
+            0xA0 => self.and(self.registers.b),
+            0xA1 => self.and(self.registers.c),
+            0xA2 => self.and(self.registers.d),
+            0xA3 => self.and(self.registers.e),
+            0xA4 => self.and(self.registers.h),
+            0xA5 => self.and(self.registers.l),
+            0xA6 => {
+                let address = self.registers.hl();
+                self.and(self.mmu.read_byte(address));
+            }
+            0xA7 => self.and(self.registers.a),
+            0xA8 => self.xor(self.registers.b),
+            0xA9 => self.xor(self.registers.c),
+            0xAA => self.xor(self.registers.d),
+            0xAB => self.xor(self.registers.e),
+            0xAC => self.xor(self.registers.h),
+            0xAD => self.xor(self.registers.l),
+            0xAE => {
+                let address = self.registers.hl();
+                self.xor(self.mmu.read_byte(address));
+            }
+            0xAF => self.xor(self.registers.a),
+            0xB0 => self.or(self.registers.b),
+            0xB1 => self.or(self.registers.c),
+            0xB2 => self.or(self.registers.d),
+            0xB3 => self.or(self.registers.e),
+            0xB4 => self.or(self.registers.h),
+            0xB5 => self.or(self.registers.l),
+            0xB6 => {
+                let address = self.registers.hl();
+                self.or(self.mmu.read_byte(address));
+            }
+            0xB7 => self.or(self.registers.a),
             0xC1 => {
                 let value = self.pop();
                 self.registers.set_bc(value);
