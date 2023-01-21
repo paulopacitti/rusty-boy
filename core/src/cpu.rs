@@ -106,6 +106,14 @@ impl CPU {
                 let value = self.registers.bc();
                 self.push(value);
             }
+            0xC6 => {
+                let value = self.fetch_byte();
+                self.add(value);
+            }
+            0xCE => {
+                let value = self.fetch_byte();
+                self.adc(value);
+            }
             0xD1 => {
                 let value = self.pop();
                 self.registers.set_de(value);
@@ -135,9 +143,15 @@ impl CPU {
         }
     }
 
+    fn fetch_byte(&mut self) -> u8 {
+        let byte = self.mmu.read_byte(self.registers.pc);
+        self.registers.pc = self.registers.pc.wrapping_add(1);
+        byte
+    }
+
     fn step(&mut self) {
         let instruction_byte = self.mmu.read_byte(self.registers.pc);
         self.execute(instruction_byte);
-        self.registers.pc += 1;
+        self.registers.pc = self.registers.pc.wrapping_add(1);
     }
 }
