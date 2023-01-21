@@ -88,6 +88,34 @@ impl super::CPU {
         self.mmu.write_word(self.registers.sp, value);
     }
 
+    /// Sub operation with register A.
+    pub fn sub(&mut self, value: u8) {
+        let (result, carry) = self.registers.a.overflowing_sub(value);
+        self.registers.f.set_z(result == 0);
+        self.registers.f.set_n(true);
+        self.registers
+            .f
+            .set_h((self.registers.a & 0x0F) < (value & 0x0F));
+        self.registers.f.set_c(carry);
+        self.registers.a = result;
+    }
+
+    /// Sub operation with carry with register A.
+    pub fn sbc(&mut self, value: u8) {
+        let carry = if self.registers.f.c() { 1 } else { 0 };
+        let result = self.registers.a.wrapping_sub(value).wrapping_sub(carry);
+        self.registers.f.set_z(result == 0);
+        self.registers.f.set_n(true);
+
+        self.registers
+            .f
+            .set_h((self.registers.a & 0x0F) < (value & 0x0F) + carry);
+        self.registers
+            .f
+            .set_h(u16::from(self.registers.a) < u16::from(value) + u16::from(carry));
+        self.registers.a = result;
+    }
+
     /// Bitwise XOR operation with register A.
     pub fn xor(&mut self, value: u8) {
         let result = self.registers.a ^ value;

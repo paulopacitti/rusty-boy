@@ -41,6 +41,8 @@ impl CPU {
                 let result = self.dec(self.mmu.read_byte(address));
                 self.mmu.write_byte(address, result);
             }
+            0x3C => self.registers.a = self.inc(self.registers.a),
+            0x3D => self.registers.a = self.dec(self.registers.a),
             0x80 => self.add(self.registers.b),
             0x81 => self.add(self.registers.c),
             0x82 => self.add(self.registers.d),
@@ -63,8 +65,28 @@ impl CPU {
                 self.adc(self.mmu.read_byte(address));
             }
             0x8F => self.adc(self.registers.a),
-            0x3C => self.registers.a = self.inc(self.registers.a),
-            0x3D => self.registers.a = self.dec(self.registers.a),
+            0x90 => self.sub(self.registers.b),
+            0x91 => self.sub(self.registers.c),
+            0x92 => self.sub(self.registers.d),
+            0x93 => self.sub(self.registers.e),
+            0x94 => self.sub(self.registers.h),
+            0x95 => self.sub(self.registers.l),
+            0x96 => {
+                let address = self.registers.hl();
+                self.sub(self.mmu.read_byte(address));
+            }
+            0x97 => self.sub(self.registers.a),
+            0x98 => self.sub(self.registers.b),
+            0x99 => self.sub(self.registers.c),
+            0x9A => self.sub(self.registers.d),
+            0x9B => self.sub(self.registers.e),
+            0x9C => self.sub(self.registers.h),
+            0x9D => self.sub(self.registers.l),
+            0x9E => {
+                let address = self.registers.hl();
+                self.sub(self.mmu.read_byte(address));
+            }
+            0x9F => self.sub(self.registers.a),
             0xA0 => self.and(self.registers.b),
             0xA1 => self.and(self.registers.c),
             0xA2 => self.and(self.registers.d),
@@ -121,6 +143,14 @@ impl CPU {
             0xD5 => {
                 let value = self.registers.de();
                 self.push(value);
+            }
+            0xD6 => {
+                let value = self.fetch_byte();
+                self.sub(value);
+            }
+            0xDE => {
+                let value = self.fetch_byte();
+                self.sbc(value);
             }
             0xE1 => {
                 let value = self.pop();
