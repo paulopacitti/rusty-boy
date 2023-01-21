@@ -31,6 +31,7 @@ impl CPU {
             0x25 => self.registers.h = self.dec(self.registers.h),
             0x2C => self.registers.l = self.inc(self.registers.l),
             0x2D => self.registers.l = self.dec(self.registers.l),
+            0x2F => self.cpl(),
             0x34 => {
                 let address = self.registers.hl();
                 let result = self.inc(self.mmu.read_byte(address));
@@ -43,6 +44,7 @@ impl CPU {
             }
             0x3C => self.registers.a = self.inc(self.registers.a),
             0x3D => self.registers.a = self.dec(self.registers.a),
+            0x3F => self.ccf(),
             0x80 => self.add(self.registers.b),
             0x81 => self.add(self.registers.c),
             0x82 => self.add(self.registers.d),
@@ -120,6 +122,17 @@ impl CPU {
                 self.or(self.mmu.read_byte(address));
             }
             0xB7 => self.or(self.registers.a),
+            0xB8 => self.cp(self.registers.b),
+            0xB9 => self.cp(self.registers.c),
+            0xBA => self.cp(self.registers.d),
+            0xBB => self.cp(self.registers.e),
+            0xBC => self.cp(self.registers.h),
+            0xBD => self.cp(self.registers.l),
+            0xBE => {
+                let address = self.registers.hl();
+                self.cp(self.mmu.read_byte(address));
+            }
+            0xBF => self.cp(self.registers.a),
             0xC1 => {
                 let value = self.pop();
                 self.registers.set_bc(value);
@@ -160,6 +173,14 @@ impl CPU {
                 let value = self.registers.hl();
                 self.push(value);
             }
+            0xE6 => {
+                let value = self.fetch_byte();
+                self.and(value);
+            }
+            0xEE => {
+                let value = self.fetch_byte();
+                self.xor(value);
+            }
             0xF1 => {
                 let value = self.pop();
                 self.registers.set_af(value);
@@ -167,6 +188,14 @@ impl CPU {
             0xF5 => {
                 let value = self.registers.af();
                 self.push(value);
+            }
+            0xF6 => {
+                let value = self.fetch_byte();
+                self.or(value);
+            }
+            0xFE => {
+                let value = self.fetch_byte();
+                self.cp(value);
             }
 
             _ => unimplemented!("Unkown instruction found for: 0x{:x}", op),

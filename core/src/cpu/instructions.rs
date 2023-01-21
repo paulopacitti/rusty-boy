@@ -38,6 +38,31 @@ impl super::CPU {
         self.registers.f.set_c(false); // reset
     }
 
+    /// Compare A with a value. This is basically an A - value subtraction instruction but the results are thrown away.
+    pub fn cp(&mut self, value: u8) {
+        let old = self.registers.a;
+        self.sub(value);
+        self.registers.a = old;
+    }
+
+    /// Complement carry flag.
+    pub fn ccf(&mut self) {
+        self.registers.f.set_n(false);
+        self.registers.f.set_h(false);
+        if self.registers.f.c() {
+            self.registers.f.set_c(false);
+        } else {
+            self.registers.f.set_c(true);
+        }
+    }
+
+    /// Complement A register (Flip all bits).
+    pub fn cpl(&mut self) {
+        self.registers.a = !self.registers.a;
+        self.registers.f.set_n(true);
+        self.registers.f.set_h(true);
+    }
+
     /// Decrement 8bit value.
     pub fn dec(&mut self, value: u8) -> u8 {
         let result = value.wrapping_sub(1);
