@@ -19,34 +19,42 @@ impl Flags {
         Flags(0x00)
     }
 
+    /// Get zero flag.
     pub fn z(&self) -> bool {
         (self.0 >> 7) & 1 != 0
     }
 
+    /// Get subtraction flag (BCD).
     pub fn n(&self) -> bool {
         (self.0 >> 6) & 1 != 0
     }
 
+    /// Get half-carry flag (BCD).
     pub fn h(&self) -> bool {
         (self.0 >> 5) & 1 != 0
     }
 
+    /// Get carry flag.
     pub fn c(&self) -> bool {
         (self.0 >> 4) & 1 != 0
     }
 
+    /// Set zero flag.
     pub fn set_z(&mut self, value: bool) {
         self.0 = (self.0 & !(1 << 7)) | (value as u8) << 7;
     }
 
+    /// Set subtraction flag (BCD).
     pub fn set_n(&mut self, value: bool) {
         self.0 = (self.0 & !(1 << 6)) | (value as u8) << 6;
     }
 
+    /// Set half-carry flag (BCD).
     pub fn set_h(&mut self, value: bool) {
         self.0 = (self.0 & !(1 << 5)) | (value as u8) << 5;
     }
 
+    /// Set carry flag.
     pub fn set_c(&mut self, value: bool) {
         self.0 = (self.0 & !(1 << 4)) | (value as u8) << 4;
     }

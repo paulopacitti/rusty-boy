@@ -1,4 +1,31 @@
 impl super::CPU {
+    /// Add operation with register A.
+    pub fn add(&mut self, value: u8) {
+        let (result, carry) = self.registers.a.overflowing_add(value);
+        self.registers.f.set_z(result == 0);
+        self.registers.f.set_n(false);
+        self.registers
+            .f
+            .set_h((self.registers.a & 0x0F) + (value & 0x0F) > 0x0F);
+        self.registers.f.set_c(carry);
+        self.registers.a = result;
+    }
+
+    /// Add with carry operation with register A.
+    pub fn adc(&mut self, value: u8) {
+        let carry = if self.registers.f.c() { 1 } else { 0 };
+        let result = self.registers.a.wrapping_add(value).wrapping_add(carry);
+        self.registers.f.set_z(result == 0);
+        self.registers.f.set_n(false);
+        self.registers
+            .f
+            .set_h((self.registers.a & 0x0F) + (value & 0x0F) + (carry & 0x0F) > 0x0F);
+        self.registers
+            .f
+            .set_c(u16::from(self.registers.a) + u16::from(value) + u16::from(carry) > 0xFF);
+        self.registers.a = result;
+    }
+
     /// Bitwise AND operation with register A.
     pub fn and(&mut self, value: u8) {
         let result = self.registers.a & value;

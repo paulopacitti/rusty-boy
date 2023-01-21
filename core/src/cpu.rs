@@ -18,7 +18,7 @@ impl CPU {
 
     fn execute(&mut self, op: u8) {
         match op {
-            0x0 => self.nop(),
+            0x00 => self.nop(),
             0x04 => self.registers.b = self.inc(self.registers.b),
             0x05 => self.registers.b = self.dec(self.registers.b),
             0x0C => self.registers.c = self.inc(self.registers.c),
@@ -41,6 +41,28 @@ impl CPU {
                 let result = self.dec(self.mmu.read_byte(address));
                 self.mmu.write_byte(address, result);
             }
+            0x80 => self.add(self.registers.b),
+            0x81 => self.add(self.registers.c),
+            0x82 => self.add(self.registers.d),
+            0x83 => self.add(self.registers.e),
+            0x84 => self.add(self.registers.h),
+            0x85 => self.add(self.registers.l),
+            0x86 => {
+                let address = self.registers.hl();
+                self.add(self.mmu.read_byte(address));
+            }
+            0x87 => self.add(self.registers.a),
+            0x88 => self.adc(self.registers.b),
+            0x89 => self.adc(self.registers.c),
+            0x8A => self.adc(self.registers.d),
+            0x8B => self.adc(self.registers.e),
+            0x8C => self.adc(self.registers.h),
+            0x8D => self.adc(self.registers.l),
+            0x8E => {
+                let address = self.registers.hl();
+                self.adc(self.mmu.read_byte(address));
+            }
+            0x8F => self.adc(self.registers.a),
             0x3C => self.registers.a = self.inc(self.registers.a),
             0x3D => self.registers.a = self.dec(self.registers.a),
             0xA0 => self.and(self.registers.b),
