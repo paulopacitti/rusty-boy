@@ -96,6 +96,10 @@ impl CPU {
                 self.registers.h = self.dec(self.registers.h);
                 1
             }
+            0x27 => {
+                self.daa();
+                1
+            }
             0x29 => {
                 self.add16_hl(self.registers.hl());
                 1
@@ -132,6 +136,10 @@ impl CPU {
                 let address = self.registers.hl();
                 let result = self.dec(self.mmu.read_byte(address));
                 self.mmu.write_byte(address, result);
+                1
+            }
+            0x37 => {
+                self.scf();
                 1
             }
             0x39 => {

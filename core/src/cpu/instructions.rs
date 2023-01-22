@@ -89,6 +89,32 @@ impl super::CPU {
         self.registers.f.set_h(true);
     }
 
+    /** Decimal adjust register A. This instruction adjusts register A so that the
+       correct representation of Binary Coded Decimal (BCD) is obtained.
+    */
+    pub fn daa(&mut self) {
+        let mut current_a = self.registers.a;
+        let mut adjust = if self.registers.f.c() { 0x60 } else { 0x00 };
+        if self.registers.f.h() {
+            adjust |= 0x06;
+        };
+        if !self.registers.f.n() {
+            if current_a & 0x0F > 0x09 {
+                adjust |= 0x06;
+            };
+            if current_a > 0x99 {
+                adjust |= 0x60;
+            };
+            current_a = current_a.wrapping_add(adjust);
+        } else {
+            current_a = current_a.wrapping_sub(adjust);
+        }
+        self.registers.f.set_z(current_a == 0);
+        self.registers.f.set_h(false);
+        self.registers.f.set_c(adjust >= 0x60);
+        self.registers.a = current_a;
+    }
+
     /// Decrement 8bit value.
     pub fn dec(&mut self, value: u8) -> u8 {
         let result = value.wrapping_sub(1);
@@ -177,6 +203,13 @@ impl super::CPU {
             .f
             .set_h(u16::from(self.registers.a) < u16::from(value) + u16::from(carry));
         self.registers.a = result;
+    }
+
+    // Set carry flag.
+    pub fn scf(&mut self) {
+        self.registers.f.set_n(false);
+        self.registers.f.set_h(false);
+        self.registers.f.set_c(true);
     }
 
     /// Bitwise XOR operation with register A.
