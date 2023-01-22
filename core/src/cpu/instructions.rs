@@ -1,5 +1,5 @@
 impl super::CPU {
-    /// Add operation with register A.
+    /// 8-bit add operation with register A.
     pub fn add(&mut self, value: u8) {
         let (result, carry) = self.registers.a.overflowing_add(value);
         self.registers.f.set_z(result == 0);
@@ -11,7 +11,33 @@ impl super::CPU {
         self.registers.a = result;
     }
 
-    /// Add with carry operation with register A.
+    /// 16-bit add operation with register HL.
+    pub fn add16_hl(&mut self, value: u16) {
+        let (result, carry) = self.registers.hl().overflowing_add(value);
+        self.registers.f.set_n(false);
+        self.registers
+            .f
+            .set_h((self.registers.hl() & 0x0FFF) + (value & 0x0FFF) > 0x0FFF);
+        self.registers.f.set_c(carry);
+        self.registers.set_hl(result);
+    }
+
+    /// 16-bit add operation of a byte with register SP.
+    pub fn add16_sp(&mut self, value: u8) {
+        let value_16 = value as u16;
+        let result = self.registers.sp.wrapping_add(value_16);
+        self.registers.f.set_z(false);
+        self.registers.f.set_n(false);
+        self.registers
+            .f
+            .set_h((self.registers.sp & 0x000F) + (value_16 & 0x000F) > 0x000F);
+        self.registers
+            .f
+            .set_c((self.registers.sp & 0x00FF) + (value_16 & 0x00FF) > 0x00FF);
+        self.registers.sp = result;
+    }
+
+    /// 8-bit add with carry operation with register A.
     pub fn adc(&mut self, value: u8) {
         let carry = if self.registers.f.c() { 1 } else { 0 };
         let result = self.registers.a.wrapping_add(value).wrapping_add(carry);
@@ -74,6 +100,12 @@ impl super::CPU {
         result
     }
 
+    /// Decrement 16-bit value.
+    pub fn dec16(&mut self, value: u16) -> u16 {
+        let result = value.wrapping_sub(1);
+        result
+    }
+
     /// Increment 8bit value.
     pub fn inc(&mut self, value: u8) -> u8 {
         let result = value.wrapping_add(1);
@@ -82,6 +114,12 @@ impl super::CPU {
         }
         self.registers.f.set_n(false);
         self.registers.f.set_h((value & 0x0F) + 1 > 0x0F); // Check for Half-Carry
+        result
+    }
+
+    /// Increment 16bit value.
+    pub fn inc16(&mut self, value: u16) -> u16 {
+        let result = value.wrapping_add(1);
         result
     }
 
