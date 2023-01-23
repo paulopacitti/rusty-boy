@@ -797,6 +797,13 @@ impl CPU {
                 self.sbc(value);
                 2
             }
+            0xE0 => {
+                let partial_address = self.fetch_byte();
+                let address = self.mmu.io_ports_address | partial_address as u16;
+                let data = self.registers.a;
+                self.mmu.write_byte(address, data);
+                3
+            }
             0xE1 => {
                 let value = self.pop();
                 self.registers.set_hl(value);
@@ -834,7 +841,13 @@ impl CPU {
                 self.xor(value);
                 2
             }
-
+            0xF0 => {
+                let partial_address = self.fetch_byte();
+                let address = self.mmu.io_ports_address | partial_address as u16;
+                let data = self.mmu.read_byte(address);
+                self.registers.a = data;
+                3
+            }
             0xF1 => {
                 let value = self.pop();
                 self.registers.set_af(value);
