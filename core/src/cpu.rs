@@ -108,6 +108,10 @@ impl CPU {
                 self.registers.d = self.fetch_byte();
                 2
             }
+            0x18 => {
+                self.jr();
+                3
+            }
             0x19 => {
                 self.add16_hl(self.registers.de());
                 2
@@ -134,6 +138,14 @@ impl CPU {
             0x1E => {
                 self.registers.e = self.fetch_byte();
                 2
+            }
+            0x20 => {
+                if !self.registers.f.z() {
+                    self.jr();
+                    3
+                } else {
+                    2
+                }
             }
             0x21 => {
                 let data = self.fetch_word();
@@ -166,6 +178,14 @@ impl CPU {
             0x27 => {
                 self.daa();
                 1
+            }
+            0x28 => {
+                if self.registers.f.z() {
+                    self.jr();
+                    3
+                } else {
+                    2
+                }
             }
             0x29 => {
                 self.add16_hl(self.registers.hl());
@@ -200,6 +220,14 @@ impl CPU {
             0x2F => {
                 self.cpl();
                 1
+            }
+            0x30 => {
+                if !self.registers.f.c() {
+                    self.jr();
+                    3
+                } else {
+                    2
+                }
             }
             0x31 => {
                 let data = self.fetch_word();
@@ -238,6 +266,14 @@ impl CPU {
             0x37 => {
                 self.scf();
                 1
+            }
+            0x38 => {
+                if self.registers.f.c() {
+                    self.jr();
+                    3
+                } else {
+                    2
+                }
             }
             0x39 => {
                 self.add16_hl(self.registers.sp);
@@ -788,6 +824,18 @@ impl CPU {
                 self.registers.set_bc(value);
                 3
             }
+            0xC2 => {
+                if !self.registers.f.z() {
+                    self.jp();
+                    4
+                } else {
+                    3
+                }
+            }
+            0xC3 => {
+                self.jp();
+                4
+            }
             0xC5 => {
                 let value = self.registers.bc();
                 self.push(value);
@@ -797,6 +845,14 @@ impl CPU {
                 let value = self.fetch_byte();
                 self.add(value);
                 2
+            }
+            0xCA => {
+                if self.registers.f.z() {
+                    self.jp();
+                    4
+                } else {
+                    3
+                }
             }
             0xCE => {
                 let value = self.fetch_byte();
@@ -808,6 +864,14 @@ impl CPU {
                 self.registers.set_de(value);
                 3
             }
+            0xD2 => {
+                if !self.registers.f.c() {
+                    self.jp();
+                    4
+                } else {
+                    3
+                }
+            }
             0xD5 => {
                 let value = self.registers.de();
                 self.push(value);
@@ -817,6 +881,14 @@ impl CPU {
                 let value = self.fetch_byte();
                 self.sub(value);
                 2
+            }
+            0xDA => {
+                if self.registers.f.c() {
+                    self.jp();
+                    4
+                } else {
+                    3
+                }
             }
             0xDE => {
                 let value = self.fetch_byte();
@@ -855,6 +927,10 @@ impl CPU {
                 let value = self.fetch_byte();
                 self.add16_sp(value);
                 4
+            }
+            0xE9 => {
+                self.registers.pc = self.registers.hl();
+                1
             }
             0xEA => {
                 let address = self.fetch_word();

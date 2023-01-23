@@ -149,6 +149,18 @@ impl super::CPU {
         result
     }
 
+    /// Jump to address provided in the next memory word.
+    pub fn jp(&mut self) {
+        let address = self.fetch_word();
+        self.registers.pc = address;
+    }
+
+    /// Jump to PC + (next byte).
+    pub fn jr(&mut self) {
+        let offset = self.fetch_byte();
+        self.registers.pc = self.registers.pc.wrapping_add(offset as u16);
+    }
+
     /// 0x00: null operation
     pub fn nop(&mut self) {}
 
