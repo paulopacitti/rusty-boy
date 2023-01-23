@@ -23,6 +23,11 @@ impl CPU {
                 self.nop();
                 1
             }
+            0x01 => {
+                let data = self.fetch_word();
+                self.registers.set_bc(data);
+                3
+            }
             0x02 => {
                 self.mmu.write_byte(self.registers.bc(), self.registers.a);
                 2
@@ -43,6 +48,12 @@ impl CPU {
             0x06 => {
                 self.registers.b = self.fetch_byte();
                 2
+            }
+            0x08 => {
+                let address = self.fetch_word();
+                let data = self.registers.sp;
+                self.mmu.write_word(address, data);
+                5
             }
             0x09 => {
                 self.add16_hl(self.registers.bc());
@@ -70,6 +81,11 @@ impl CPU {
             0x0E => {
                 self.registers.c = self.fetch_byte();
                 2
+            }
+            0x11 => {
+                let data = self.fetch_word();
+                self.registers.set_de(data);
+                3
             }
             0x12 => {
                 self.mmu.write_byte(self.registers.de(), self.registers.a);
@@ -118,6 +134,11 @@ impl CPU {
             0x1E => {
                 self.registers.e = self.fetch_byte();
                 2
+            }
+            0x21 => {
+                let data = self.fetch_word();
+                self.registers.set_hl(data);
+                3
             }
             0x22 => {
                 self.mmu.write_byte(self.registers.hl(), self.registers.a);
@@ -179,6 +200,11 @@ impl CPU {
             0x2F => {
                 self.cpl();
                 1
+            }
+            0x31 => {
+                let data = self.fetch_word();
+                self.registers.sp = data;
+                3
             }
             0x32 => {
                 self.mmu.write_byte(self.registers.hl(), self.registers.a);
@@ -867,6 +893,25 @@ impl CPU {
             0xF6 => {
                 let value = self.fetch_byte();
                 self.or(value);
+                2
+            }
+            0xF8 => {
+                let offset = self.fetch_byte() as u16;
+                let sum = self.registers.sp.wrapping_add(offset);
+                self.registers.f.set_z(false);
+                self.registers.f.set_n(false);
+                self.registers
+                    .f
+                    .set_h((self.registers.sp & 0x000F) + (offset & 0x000F) > 0x000F);
+                self.registers
+                    .f
+                    .set_c((self.registers.sp & 0x00FF) + (offset & 0x00FF) > 0x00FF);
+
+                self.registers.set_hl(sum);
+                3
+            }
+            0xF9 => {
+                self.registers.sp = self.registers.hl();
                 2
             }
             0xFA => {
