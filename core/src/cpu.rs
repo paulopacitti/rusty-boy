@@ -846,6 +846,14 @@ impl CPU {
                 self.jp();
                 4
             }
+            0xC4 => {
+                if !self.registers.f.z() {
+                    self.call();
+                    6
+                } else {
+                    3
+                }
+            }
             0xC5 => {
                 let value = self.registers.bc();
                 self.push(value);
@@ -876,6 +884,18 @@ impl CPU {
                     3
                 }
             }
+            0xCC => {
+                if self.registers.f.z() {
+                    self.call();
+                    6
+                } else {
+                    3
+                }
+            }
+            0xCD => {
+                self.call();
+                6
+            }
             0xCE => {
                 let value = self.fetch_byte();
                 self.adc(value);
@@ -898,6 +918,14 @@ impl CPU {
                 if !self.registers.f.c() {
                     self.jp();
                     4
+                } else {
+                    3
+                }
+            }
+            0xD4 => {
+                if !self.registers.f.c() {
+                    self.call();
+                    6
                 } else {
                     3
                 }
@@ -929,6 +957,14 @@ impl CPU {
                 if self.registers.f.c() {
                     self.jp();
                     4
+                } else {
+                    3
+                }
+            }
+            0xDC => {
+                if self.registers.f.c() {
+                    self.call();
+                    6
                 } else {
                     3
                 }

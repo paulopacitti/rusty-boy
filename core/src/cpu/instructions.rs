@@ -64,6 +64,14 @@ impl super::CPU {
         self.registers.f.set_c(false); // reset
     }
 
+    /// Push address of next instruction onto stack and then jump to address in the next memory word.
+    pub fn call(&mut self) {
+        let next_instruction = self.registers.pc.wrapping_add(2);
+        self.push(next_instruction);
+
+        self.registers.pc = self.fetch_word();
+    }
+
     /// Compare A with a value. This is basically an A - value subtraction instruction but the results are thrown away.
     pub fn cp(&mut self, value: u8) {
         let old = self.registers.a;
