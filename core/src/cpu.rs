@@ -4,6 +4,7 @@ mod instructions;
 mod registers;
 
 pub struct CPU {
+    ime: bool,
     registers: registers::Registers,
     mmu: Memory,
 }
@@ -13,6 +14,7 @@ impl CPU {
         CPU {
             registers: registers::Registers::new(),
             mmu: Memory::new(),
+            ime: true,
         }
     }
 
@@ -819,6 +821,14 @@ impl CPU {
                 self.cp(self.registers.a);
                 1
             }
+            0xC0 => {
+                if !self.registers.f.z() {
+                    self.ret();
+                    5
+                } else {
+                    2
+                }
+            }
             0xC1 => {
                 let value = self.pop();
                 self.registers.set_bc(value);
@@ -846,6 +856,18 @@ impl CPU {
                 self.add(value);
                 2
             }
+            0xC8 => {
+                if self.registers.f.z() {
+                    self.ret();
+                    5
+                } else {
+                    2
+                }
+            }
+            0xC9 => {
+                self.ret();
+                4
+            }
             0xCA => {
                 if self.registers.f.z() {
                     self.jp();
@@ -858,6 +880,14 @@ impl CPU {
                 let value = self.fetch_byte();
                 self.adc(value);
                 2
+            }
+            0xD0 => {
+                if !self.registers.f.c() {
+                    self.ret();
+                    5
+                } else {
+                    2
+                }
             }
             0xD1 => {
                 let value = self.pop();
@@ -881,6 +911,19 @@ impl CPU {
                 let value = self.fetch_byte();
                 self.sub(value);
                 2
+            }
+            0xD8 => {
+                if self.registers.f.c() {
+                    self.ret();
+                    5
+                } else {
+                    2
+                }
+            }
+            0xD9 => {
+                self.ret();
+                self.ime = true;
+                4
             }
             0xDA => {
                 if self.registers.f.c() {

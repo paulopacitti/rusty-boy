@@ -189,6 +189,11 @@ impl super::CPU {
         self.mmu.write_word(self.registers.sp, value);
     }
 
+    /// Update PC register to return to instruction stored on the stack.
+    pub fn ret(&mut self) {
+        self.registers.pc = self.pop();
+    }
+
     /// Sub operation with register A.
     pub fn sub(&mut self, value: u8) {
         let (result, carry) = self.registers.a.overflowing_sub(value);
