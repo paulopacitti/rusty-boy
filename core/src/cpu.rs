@@ -23,6 +23,10 @@ impl CPU {
                 self.nop();
                 1
             }
+            0x02 => {
+                self.mmu.write_byte(self.registers.bc(), self.registers.a);
+                2
+            }
             0x03 => {
                 let result = self.inc16(self.registers.bc());
                 self.registers.set_bc(result);
@@ -36,9 +40,19 @@ impl CPU {
                 self.registers.b = self.dec(self.registers.b);
                 1
             }
+            0x06 => {
+                self.registers.b = self.fetch_byte();
+                2
+            }
             0x09 => {
                 self.add16_hl(self.registers.bc());
                 1
+            }
+            0x0A => {
+                let address = self.registers.bc();
+                let data = self.mmu.read_byte(address);
+                self.registers.a = data;
+                2
             }
             0x0B => {
                 let result = self.dec16(self.registers.bc());
@@ -53,6 +67,14 @@ impl CPU {
                 self.registers.c = self.dec(self.registers.c);
                 1
             }
+            0x0E => {
+                self.registers.c = self.fetch_byte();
+                2
+            }
+            0x12 => {
+                self.mmu.write_byte(self.registers.de(), self.registers.a);
+                2
+            }
             0x13 => {
                 let result = self.inc16(self.registers.de());
                 self.registers.set_de(result);
@@ -66,8 +88,18 @@ impl CPU {
                 self.registers.d = self.dec(self.registers.d);
                 1
             }
+            0x16 => {
+                self.registers.d = self.fetch_byte();
+                2
+            }
             0x19 => {
                 self.add16_hl(self.registers.de());
+                2
+            }
+            0x1A => {
+                let address = self.registers.de();
+                let data = self.mmu.read_byte(address);
+                self.registers.a = data;
                 2
             }
             0x1B => {
@@ -83,6 +115,16 @@ impl CPU {
                 self.registers.e = self.dec(self.registers.e);
                 1
             }
+            0x1E => {
+                self.registers.e = self.fetch_byte();
+                2
+            }
+            0x22 => {
+                self.mmu.write_byte(self.registers.hl(), self.registers.a);
+                let inc = self.registers.hl().wrapping_add(1);
+                self.registers.set_hl(inc);
+                2
+            }
             0x23 => {
                 let result = self.inc16(self.registers.hl());
                 self.registers.set_hl(result);
@@ -96,12 +138,25 @@ impl CPU {
                 self.registers.h = self.dec(self.registers.h);
                 1
             }
+            0x26 => {
+                self.registers.h = self.fetch_byte();
+                2
+            }
             0x27 => {
                 self.daa();
                 1
             }
             0x29 => {
                 self.add16_hl(self.registers.hl());
+                2
+            }
+            0x2A => {
+                let address = self.registers.hl();
+                let new_address = self.registers.hl().wrapping_add(1);
+                self.registers.set_hl(new_address);
+
+                let data = self.mmu.read_byte(address);
+                self.registers.a = data;
                 2
             }
             0x2B => {
@@ -117,9 +172,19 @@ impl CPU {
                 self.registers.l = self.dec(self.registers.l);
                 1
             }
+            0x2E => {
+                self.registers.l = self.fetch_byte();
+                2
+            }
             0x2F => {
                 self.cpl();
                 1
+            }
+            0x32 => {
+                self.mmu.write_byte(self.registers.hl(), self.registers.a);
+                let dec = self.registers.hl().wrapping_sub(1);
+                self.registers.set_hl(dec);
+                2
             }
             0x33 => {
                 let result = self.inc16(self.registers.sp);
@@ -138,12 +203,27 @@ impl CPU {
                 self.mmu.write_byte(address, result);
                 3
             }
+            0x36 => {
+                let imm = self.fetch_byte();
+                let address = self.registers.hl();
+                self.mmu.write_byte(address, imm);
+                3
+            }
             0x37 => {
                 self.scf();
                 1
             }
             0x39 => {
                 self.add16_hl(self.registers.sp);
+                2
+            }
+            0x3A => {
+                let address = self.registers.hl();
+                let new_address = self.registers.hl().wrapping_sub(1);
+                self.registers.set_hl(new_address);
+
+                let data = self.mmu.read_byte(address);
+                self.registers.a = data;
                 2
             }
             0x3B => {
@@ -158,6 +238,10 @@ impl CPU {
             0x3D => {
                 self.registers.a = self.dec(self.registers.a);
                 1
+            }
+            0x3E => {
+                self.registers.a = self.fetch_byte();
+                2
             }
             0x3F => {
                 self.ccf();
@@ -718,6 +802,12 @@ impl CPU {
                 self.registers.set_hl(value);
                 1
             }
+            0xE2 => {
+                let address = self.mmu.io_ports_address + (self.registers.c as u16);
+                let data = self.registers.a;
+                self.mmu.write_byte(address, data);
+                2
+            }
             0xE5 => {
                 let value = self.registers.hl();
                 self.push(value);
@@ -733,15 +823,28 @@ impl CPU {
                 self.add16_sp(value);
                 4
             }
+            0xEA => {
+                let address = self.fetch_word();
+                let data = self.registers.a;
+                self.mmu.write_byte(address, data);
+                4
+            }
             0xEE => {
                 let value = self.fetch_byte();
                 self.xor(value);
                 2
             }
+
             0xF1 => {
                 let value = self.pop();
                 self.registers.set_af(value);
                 1
+            }
+            0xF2 => {
+                let address = self.mmu.io_ports_address + (self.registers.c as u16);
+                let data = self.mmu.read_byte(address);
+                self.registers.a = data;
+                2
             }
             0xF5 => {
                 let value = self.registers.af();
@@ -752,6 +855,12 @@ impl CPU {
                 let value = self.fetch_byte();
                 self.or(value);
                 2
+            }
+            0xFA => {
+                let address = self.fetch_word();
+                let data = self.mmu.read_byte(address);
+                self.registers.a = data;
+                4
             }
             0xFE => {
                 let value = self.fetch_byte();
@@ -767,6 +876,12 @@ impl CPU {
         let byte = self.mmu.read_byte(self.registers.pc);
         self.registers.pc = self.registers.pc.wrapping_add(1);
         byte
+    }
+
+    fn fetch_word(&mut self) -> u16 {
+        let word = self.mmu.read_word(self.registers.pc);
+        self.registers.pc = self.registers.pc.wrapping_add(2);
+        word
     }
 
     fn step(&mut self) {

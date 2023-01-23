@@ -15,12 +15,16 @@
 
 pub struct Memory {
     memory: [u8; 0xFFFF],
+    pub io_ports_address: u16,
 }
 
 impl Memory {
+    const IO_PORTS_ADDRESS: u16 = 0xFF00;
+
     pub fn new() -> Self {
         Memory {
             memory: [0; 0xFFFF],
+            io_ports_address: Self::IO_PORTS_ADDRESS,
         }
     }
 
