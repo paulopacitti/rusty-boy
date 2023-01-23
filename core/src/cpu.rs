@@ -864,6 +864,10 @@ impl CPU {
                 self.add(value);
                 2
             }
+            0xC7 => {
+                self.rst(0x0000);
+                4
+            }
             0xC8 => {
                 if self.registers.f.z() {
                     self.ret();
@@ -900,6 +904,10 @@ impl CPU {
                 let value = self.fetch_byte();
                 self.adc(value);
                 2
+            }
+            0xCF => {
+                self.rst(0x0008);
+                4
             }
             0xD0 => {
                 if !self.registers.f.c() {
@@ -940,6 +948,10 @@ impl CPU {
                 self.sub(value);
                 2
             }
+            0xD7 => {
+                self.rst(0x0010);
+                4
+            }
             0xD8 => {
                 if self.registers.f.c() {
                     self.ret();
@@ -974,6 +986,10 @@ impl CPU {
                 self.sbc(value);
                 2
             }
+            0xDF => {
+                self.rst(0x0018);
+                4
+            }
             0xE0 => {
                 let partial_address = self.fetch_byte();
                 let address = self.mmu.io_ports_address | partial_address as u16;
@@ -1002,6 +1018,10 @@ impl CPU {
                 self.and(value);
                 2
             }
+            0xE7 => {
+                self.rst(0x0020);
+                4
+            }
             0xE8 => {
                 let value = self.fetch_byte();
                 self.add16_sp(value);
@@ -1021,6 +1041,10 @@ impl CPU {
                 let value = self.fetch_byte();
                 self.xor(value);
                 2
+            }
+            0xEF => {
+                self.rst(0x0028);
+                4
             }
             0xF0 => {
                 let partial_address = self.fetch_byte();
@@ -1049,6 +1073,10 @@ impl CPU {
                 let value = self.fetch_byte();
                 self.or(value);
                 2
+            }
+            0xF7 => {
+                self.rst(0x0030);
+                4
             }
             0xF8 => {
                 let offset = self.fetch_byte() as u16;
@@ -1079,6 +1107,10 @@ impl CPU {
                 let value = self.fetch_byte();
                 self.cp(value);
                 2
+            }
+            0xFF => {
+                self.rst(0x0038);
+                4
             }
 
             _ => unimplemented!("Unkown instruction found for: 0x{:x}", op),

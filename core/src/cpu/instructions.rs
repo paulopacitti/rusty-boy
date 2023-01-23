@@ -202,6 +202,12 @@ impl super::CPU {
         self.registers.pc = self.pop();
     }
 
+    /// Push present address onto stack and jump to address 0x0000 + arg.
+    pub fn rst(&mut self, address: u16) {
+        self.push(self.registers.pc);
+        self.registers.pc = 0x0000 + address;
+    }
+
     /// Sub operation with register A.
     pub fn sub(&mut self, value: u8) {
         let (result, carry) = self.registers.a.overflowing_sub(value);
