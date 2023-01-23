@@ -760,12 +760,12 @@ impl CPU {
             0xC1 => {
                 let value = self.pop();
                 self.registers.set_bc(value);
-                1
+                3
             }
             0xC5 => {
                 let value = self.registers.bc();
                 self.push(value);
-                1
+                4
             }
             0xC6 => {
                 let value = self.fetch_byte();
@@ -780,12 +780,12 @@ impl CPU {
             0xD1 => {
                 let value = self.pop();
                 self.registers.set_de(value);
-                1
+                3
             }
             0xD5 => {
                 let value = self.registers.de();
                 self.push(value);
-                1
+                4
             }
             0xD6 => {
                 let value = self.fetch_byte();
@@ -807,7 +807,7 @@ impl CPU {
             0xE1 => {
                 let value = self.pop();
                 self.registers.set_hl(value);
-                1
+                3
             }
             0xE2 => {
                 let address = self.mmu.io_ports_address + (self.registers.c as u16);
@@ -818,7 +818,7 @@ impl CPU {
             0xE5 => {
                 let value = self.registers.hl();
                 self.push(value);
-                1
+                4
             }
             0xE6 => {
                 let value = self.fetch_byte();
@@ -851,7 +851,7 @@ impl CPU {
             0xF1 => {
                 let value = self.pop();
                 self.registers.set_af(value);
-                1
+                3
             }
             0xF2 => {
                 let address = self.mmu.io_ports_address + (self.registers.c as u16);
@@ -862,7 +862,7 @@ impl CPU {
             0xF5 => {
                 let value = self.registers.af();
                 self.push(value);
-                1
+                4
             }
             0xF6 => {
                 let value = self.fetch_byte();
