@@ -1256,6 +1256,146 @@ impl super::CPU {
                 self.registers.a = self.rr(self.registers.a);
                 2
             }
+            0x20 => {
+                self.registers.b = self.sla(self.registers.b);
+                2
+            }
+            0x21 => {
+                self.registers.c = self.sla(self.registers.c);
+                2
+            }
+            0x22 => {
+                self.registers.d = self.sla(self.registers.d);
+                2
+            }
+            0x23 => {
+                self.registers.e = self.sla(self.registers.e);
+                2
+            }
+            0x24 => {
+                self.registers.h = self.sla(self.registers.h);
+                2
+            }
+            0x25 => {
+                self.registers.l = self.sla(self.registers.l);
+                2
+            }
+            0x26 => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                let rotation = self.sla(data);
+                self.mmu.write_byte(address, rotation);
+                4
+            }
+            0x27 => {
+                self.registers.a = self.sla(self.registers.a);
+                2
+            }
+            0x28 => {
+                self.registers.b = self.sra(self.registers.b);
+                2
+            }
+            0x29 => {
+                self.registers.c = self.sra(self.registers.c);
+                2
+            }
+            0x2A => {
+                self.registers.d = self.sra(self.registers.d);
+                2
+            }
+            0x2B => {
+                self.registers.e = self.sra(self.registers.e);
+                2
+            }
+            0x2C => {
+                self.registers.h = self.sra(self.registers.h);
+                2
+            }
+            0x2D => {
+                self.registers.l = self.sra(self.registers.l);
+                2
+            }
+            0x2E => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                let rotation = self.sra(data);
+                self.mmu.write_byte(address, rotation);
+                4
+            }
+            0x2F => {
+                self.registers.a = self.sra(self.registers.a);
+                2
+            }
+            0x30 => {
+                self.registers.b = self.swap(self.registers.b);
+                2
+            }
+            0x31 => {
+                self.registers.c = self.swap(self.registers.c);
+                2
+            }
+            0x32 => {
+                self.registers.d = self.swap(self.registers.d);
+                2
+            }
+            0x33 => {
+                self.registers.e = self.swap(self.registers.e);
+                2
+            }
+            0x34 => {
+                self.registers.h = self.swap(self.registers.h);
+                2
+            }
+            0x35 => {
+                self.registers.l = self.swap(self.registers.l);
+                2
+            }
+            0x36 => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                let rotation = self.swap(data);
+                self.mmu.write_byte(address, rotation);
+                4
+            }
+            0x37 => {
+                self.registers.a = self.swap(self.registers.a);
+                2
+            }
+            0x38 => {
+                self.registers.b = self.srl(self.registers.b);
+                2
+            }
+            0x39 => {
+                self.registers.c = self.srl(self.registers.c);
+                2
+            }
+            0x3A => {
+                self.registers.d = self.srl(self.registers.d);
+                2
+            }
+            0x3B => {
+                self.registers.e = self.srl(self.registers.e);
+                2
+            }
+            0x3C => {
+                self.registers.h = self.srl(self.registers.h);
+                2
+            }
+            0x3D => {
+                self.registers.l = self.srl(self.registers.l);
+                2
+            }
+            0x3E => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                let rotation = self.srl(data);
+                self.mmu.write_byte(address, rotation);
+                4
+            }
+            0x3F => {
+                self.registers.a = self.srl(self.registers.a);
+                2
+            }
 
             _ => unimplemented!("Unkown instruction found for: 0xCB{:x}", op),
         }

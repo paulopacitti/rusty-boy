@@ -304,18 +304,6 @@ impl super::CPU {
         self.registers.pc = 0x0000 + address;
     }
 
-    /// Sub operation with register A.
-    pub fn sub(&mut self, value: u8) {
-        let (result, carry) = self.registers.a.overflowing_sub(value);
-        self.registers.f.set_z(result == 0);
-        self.registers.f.set_n(true);
-        self.registers
-            .f
-            .set_h((self.registers.a & 0x0F) < (value & 0x0F));
-        self.registers.f.set_c(carry);
-        self.registers.a = result;
-    }
-
     /// Sub operation with carry with register A.
     pub fn sbc(&mut self, value: u8) {
         let carry = if self.registers.f.c() { 1 } else { 0 };
@@ -337,6 +325,66 @@ impl super::CPU {
         self.registers.f.set_n(false);
         self.registers.f.set_h(false);
         self.registers.f.set_c(true);
+    }
+
+    /// Shift left into Carry. LSB of set to 0.
+    pub fn sla(&mut self, value: u8) -> u8 {
+        let carry = (value & 0x80) == 0x80;
+        let shifted = value << 1;
+
+        self.registers.f.set_z(shifted == 0);
+        self.registers.f.set_n(false);
+        self.registers.f.set_h(false);
+        self.registers.f.set_c(carry);
+
+        shifted
+    }
+
+    /// Shift right into Carry. MSB doesn't change.
+    pub fn sra(&mut self, value: u8) -> u8 {
+        let carry = (value & 0x01) == 0x01;
+        let shifted = value >> 1 | (value & 0x80); // negative values, preserve MSB.
+
+        self.registers.f.set_z(shifted == 0);
+        self.registers.f.set_n(false);
+        self.registers.f.set_h(false);
+        self.registers.f.set_c(carry);
+
+        shifted
+    }
+
+    /// Shift right into Carry. MSB set to 0.
+    pub fn srl(&mut self, value: u8) -> u8 {
+        let carry = (value & 0x01) == 0x01;
+        let shifted = value >> 1;
+
+        self.registers.f.set_z(shifted == 0);
+        self.registers.f.set_n(false);
+        self.registers.f.set_h(false);
+        self.registers.f.set_c(carry);
+
+        shifted
+    }
+
+    /// Sub operation with register A.
+    pub fn sub(&mut self, value: u8) {
+        let (result, carry) = self.registers.a.overflowing_sub(value);
+        self.registers.f.set_z(result == 0);
+        self.registers.f.set_n(true);
+        self.registers
+            .f
+            .set_h((self.registers.a & 0x0F) < (value & 0x0F));
+        self.registers.f.set_c(carry);
+        self.registers.a = result;
+    }
+
+    /// Swap upper & lower nibles.
+    pub fn swap(&mut self, value: u8) -> u8 {
+        self.registers.f.set_z(value == 0);
+        self.registers.f.set_n(false);
+        self.registers.f.set_h(false);
+        self.registers.f.set_c(false);
+        (value >> 4) | (value << 4)
     }
 
     /// Bitwise XOR operation with register A.
