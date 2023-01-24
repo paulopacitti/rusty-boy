@@ -51,6 +51,10 @@ impl CPU {
                 self.registers.b = self.fetch_byte();
                 2
             }
+            0x07 => {
+                self.rlca();
+                2
+            }
             0x08 => {
                 let address = self.fetch_word();
                 let data = self.registers.sp;
@@ -84,6 +88,10 @@ impl CPU {
                 self.registers.c = self.fetch_byte();
                 2
             }
+            0x0F => {
+                self.rrca();
+                2
+            }
             0x11 => {
                 let data = self.fetch_word();
                 self.registers.set_de(data);
@@ -108,6 +116,10 @@ impl CPU {
             }
             0x16 => {
                 self.registers.d = self.fetch_byte();
+                2
+            }
+            0x17 => {
+                self.rla();
                 2
             }
             0x18 => {
@@ -139,6 +151,10 @@ impl CPU {
             }
             0x1E => {
                 self.registers.e = self.fetch_byte();
+                2
+            }
+            0x1F => {
+                self.rra();
                 2
             }
             0x20 => {

@@ -202,6 +202,50 @@ impl super::CPU {
         self.registers.pc = self.pop();
     }
 
+    /// Rotate A left through Carry flag.
+    pub fn rla(&mut self) {
+        let carry = (self.registers.a & 0x80) == 0x80;
+        self.registers.a = (self.registers.a << 1) | if self.registers.f.c() { 1 } else { 0 };
+
+        self.registers.f.set_z(self.registers.a == 0);
+        self.registers.f.set_n(false);
+        self.registers.f.set_h(false);
+        self.registers.f.set_c(carry);
+    }
+
+    /// Rotate A left. Old bit 7 to Carry flag.
+    pub fn rlca(&mut self) {
+        let carry = (self.registers.a & 0x80) == 0x80;
+        self.registers.a = self.registers.a.rotate_left(1);
+
+        self.registers.f.set_z(self.registers.a == 0);
+        self.registers.f.set_n(false);
+        self.registers.f.set_h(false);
+        self.registers.f.set_c(carry);
+    }
+
+    /// Rotate A right through Carry flag.
+    pub fn rra(&mut self) {
+        let carry = (self.registers.a & 0x01) == 0x01;
+        self.registers.a = (self.registers.a >> 1) | if self.registers.f.c() { 0x80 } else { 0 };
+
+        self.registers.f.set_z(self.registers.a == 0);
+        self.registers.f.set_n(false);
+        self.registers.f.set_h(false);
+        self.registers.f.set_c(carry);
+    }
+
+    /// Rotate A right. Old bit 0 to Carry flag.
+    pub fn rrca(&mut self) {
+        let carry = (self.registers.a & 0x01) == 0x01;
+        self.registers.a = self.registers.a.rotate_right(1);
+
+        self.registers.f.set_z(self.registers.a == 0);
+        self.registers.f.set_n(false);
+        self.registers.f.set_h(false);
+        self.registers.f.set_c(carry);
+    }
+
     /// Push present address onto stack and jump to address 0x0000 + arg.
     pub fn rst(&mut self, address: u16) {
         self.push(self.registers.pc);
