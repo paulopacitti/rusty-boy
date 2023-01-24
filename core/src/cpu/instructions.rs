@@ -202,45 +202,97 @@ impl super::CPU {
         self.registers.pc = self.pop();
     }
 
-    /// Rotate A left through Carry flag.
+    /// Rotate left through Carry flag.
+    pub fn rl(&mut self, value: u8) -> u8 {
+        let carry = (value & 0x80) == 0x80;
+        let rotated = (value << 1) | if self.registers.f.c() { 1 } else { 0 };
+
+        self.registers.f.set_z(rotated == 0);
+        self.registers.f.set_n(false);
+        self.registers.f.set_h(false);
+        self.registers.f.set_c(carry);
+
+        rotated
+    }
+
+    /// Rotate register A left through Carry flag.
     pub fn rla(&mut self) {
         let carry = (self.registers.a & 0x80) == 0x80;
         self.registers.a = (self.registers.a << 1) | if self.registers.f.c() { 1 } else { 0 };
 
-        self.registers.f.set_z(self.registers.a == 0);
+        self.registers.f.set_z(false);
         self.registers.f.set_n(false);
         self.registers.f.set_h(false);
         self.registers.f.set_c(carry);
     }
 
-    /// Rotate A left. Old bit 7 to Carry flag.
+    /// Rotate left. Old bit 7 to Carry flag.
+    pub fn rlc(&mut self, value: u8) -> u8 {
+        let carry = (value & 0x80) == 0x80;
+        let rotated = value.rotate_left(1);
+
+        self.registers.f.set_z(rotated == 0);
+        self.registers.f.set_n(false);
+        self.registers.f.set_h(false);
+        self.registers.f.set_c(carry);
+
+        rotated
+    }
+
+    /// Rotate register A left. Old bit 7 to Carry flag.
     pub fn rlca(&mut self) {
         let carry = (self.registers.a & 0x80) == 0x80;
         self.registers.a = self.registers.a.rotate_left(1);
 
-        self.registers.f.set_z(self.registers.a == 0);
+        self.registers.f.set_z(false);
         self.registers.f.set_n(false);
         self.registers.f.set_h(false);
         self.registers.f.set_c(carry);
     }
 
-    /// Rotate A right through Carry flag.
+    /// Rotate right through Carry flag.
+    pub fn rr(&mut self, value: u8) -> u8 {
+        let carry = (value & 0x01) == 0x01;
+        let rotated = (value >> 1) | if self.registers.f.c() { 0x80 } else { 0 };
+
+        self.registers.f.set_z(rotated == 0);
+        self.registers.f.set_n(false);
+        self.registers.f.set_h(false);
+        self.registers.f.set_c(carry);
+
+        rotated
+    }
+
+    /// Rotate register A right through Carry flag.
     pub fn rra(&mut self) {
         let carry = (self.registers.a & 0x01) == 0x01;
         self.registers.a = (self.registers.a >> 1) | if self.registers.f.c() { 0x80 } else { 0 };
 
-        self.registers.f.set_z(self.registers.a == 0);
+        self.registers.f.set_z(false);
         self.registers.f.set_n(false);
         self.registers.f.set_h(false);
         self.registers.f.set_c(carry);
     }
 
-    /// Rotate A right. Old bit 0 to Carry flag.
+    /// Rotate right. Old bit 0 to Carry flag.
+    pub fn rrc(&mut self, value: u8) -> u8 {
+        let carry = (value & 0x01) == 0x01;
+        let rotated = value.rotate_right(1);
+
+        self.registers.f.set_z(rotated == 0);
+        self.registers.f.set_n(false);
+        self.registers.f.set_h(false);
+        self.registers.f.set_c(carry);
+
+        rotated
+    }
+
+    /// Rotate register A right. Old bit 0 to Carry flag.
     pub fn rrca(&mut self) {
         let carry = (self.registers.a & 0x01) == 0x01;
         self.registers.a = self.registers.a.rotate_right(1);
 
-        self.registers.f.set_z(self.registers.a == 0);
+        self.registers.f.set_z(false);
         self.registers.f.set_n(false);
         self.registers.f.set_h(false);
         self.registers.f.set_c(carry);
