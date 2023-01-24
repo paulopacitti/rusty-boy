@@ -64,6 +64,15 @@ impl super::CPU {
         self.registers.f.set_c(false); // reset
     }
 
+    /// Test if selected bit is zero and set ZERO flag.
+    pub fn bit(&mut self, register: u8, value: u8) {
+        let zero = (register & (1 << value)) == 0;
+
+        self.registers.f.set_z(zero);
+        self.registers.f.set_n(false); // reset
+        self.registers.f.set_h(true); // set
+    }
+
     /// Push address of next instruction onto stack and then jump to address in the next memory word.
     pub fn call(&mut self) {
         let next_instruction = self.registers.pc.wrapping_add(2);
