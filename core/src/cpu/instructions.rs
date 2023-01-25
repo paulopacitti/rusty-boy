@@ -211,6 +211,7 @@ impl super::CPU {
         let result = register & !(1 << value);
         result
     }
+
     /// Update PC register to return to instruction stored on the stack.
     pub fn ret(&mut self) {
         self.registers.pc = self.pop();
@@ -339,6 +340,12 @@ impl super::CPU {
         self.registers.f.set_n(false);
         self.registers.f.set_h(false);
         self.registers.f.set_c(true);
+    }
+
+    /// Set bit in register.
+    pub fn set(&mut self, register: u8, value: u8) -> u8 {
+        let result = register | (1 << value);
+        result
     }
 
     /// Shift left into Carry. LSB of set to 0.

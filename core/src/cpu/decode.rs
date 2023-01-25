@@ -1944,8 +1944,282 @@ impl super::CPU {
                 self.registers.a = self.res(self.registers.a, 7);
                 2
             }
-
-            _ => unimplemented!("Unkown instruction found for: 0xCB{:x}", op),
+            0xC0 => {
+                self.registers.b = self.set(self.registers.b, 0);
+                2
+            }
+            0xC1 => {
+                self.registers.c = self.set(self.registers.c, 0);
+                2
+            }
+            0xC2 => {
+                self.registers.d = self.set(self.registers.d, 0);
+                2
+            }
+            0xC3 => {
+                self.registers.e = self.set(self.registers.e, 0);
+                2
+            }
+            0xC4 => {
+                self.registers.h = self.set(self.registers.h, 0);
+                2
+            }
+            0xC5 => {
+                self.registers.l = self.set(self.registers.l, 0);
+                2
+            }
+            0xC6 => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                let reset = self.set(data, 0);
+                self.mmu.write_byte(address, reset);
+                4
+            }
+            0xC7 => {
+                self.registers.a = self.set(self.registers.a, 0);
+                2
+            }
+            0xC8 => {
+                self.registers.b = self.set(self.registers.b, 1);
+                2
+            }
+            0xC9 => {
+                self.registers.c = self.set(self.registers.c, 1);
+                2
+            }
+            0xCA => {
+                self.registers.d = self.set(self.registers.d, 1);
+                2
+            }
+            0xCB => {
+                self.registers.e = self.set(self.registers.e, 1);
+                2
+            }
+            0xCC => {
+                self.registers.h = self.set(self.registers.h, 1);
+                2
+            }
+            0xCD => {
+                self.registers.l = self.set(self.registers.l, 1);
+                2
+            }
+            0xCE => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                self.set(data, 1);
+                4
+            }
+            0xCF => {
+                self.registers.a = self.set(self.registers.a, 1);
+                2
+            }
+            0xD0 => {
+                self.registers.b = self.set(self.registers.b, 2);
+                2
+            }
+            0xD1 => {
+                self.registers.c = self.set(self.registers.c, 2);
+                2
+            }
+            0xD2 => {
+                self.registers.d = self.set(self.registers.d, 2);
+                2
+            }
+            0xD3 => {
+                self.registers.e = self.set(self.registers.e, 2);
+                2
+            }
+            0xD4 => {
+                self.registers.h = self.set(self.registers.h, 2);
+                2
+            }
+            0xD5 => {
+                self.registers.l = self.set(self.registers.l, 2);
+                2
+            }
+            0xD6 => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                let reset = self.set(data, 2);
+                self.mmu.write_byte(address, reset);
+                4
+            }
+            0xD7 => {
+                self.registers.a = self.set(self.registers.a, 2);
+                2
+            }
+            0xD8 => {
+                self.registers.b = self.set(self.registers.b, 3);
+                2
+            }
+            0xD9 => {
+                self.registers.c = self.set(self.registers.c, 3);
+                2
+            }
+            0xDA => {
+                self.registers.d = self.set(self.registers.d, 3);
+                2
+            }
+            0xDB => {
+                self.registers.e = self.set(self.registers.e, 3);
+                2
+            }
+            0xDC => {
+                self.registers.h = self.set(self.registers.h, 3);
+                2
+            }
+            0xDD => {
+                self.registers.l = self.set(self.registers.l, 3);
+                2
+            }
+            0xDE => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                self.set(data, 3);
+                4
+            }
+            0xDF => {
+                self.registers.a = self.set(self.registers.a, 3);
+                2
+            }
+            0xE0 => {
+                self.registers.b = self.set(self.registers.b, 4);
+                2
+            }
+            0xE1 => {
+                self.registers.c = self.set(self.registers.c, 4);
+                2
+            }
+            0xE2 => {
+                self.registers.d = self.set(self.registers.d, 4);
+                2
+            }
+            0xE3 => {
+                self.registers.e = self.set(self.registers.e, 4);
+                2
+            }
+            0xE4 => {
+                self.registers.h = self.set(self.registers.h, 4);
+                2
+            }
+            0xE5 => {
+                self.registers.l = self.set(self.registers.l, 4);
+                2
+            }
+            0xE6 => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                let reset = self.set(data, 4);
+                self.mmu.write_byte(address, reset);
+                4
+            }
+            0xE7 => {
+                self.registers.a = self.set(self.registers.a, 4);
+                2
+            }
+            0xE8 => {
+                self.registers.b = self.set(self.registers.b, 5);
+                2
+            }
+            0xE9 => {
+                self.registers.c = self.set(self.registers.c, 5);
+                2
+            }
+            0xEA => {
+                self.registers.d = self.set(self.registers.d, 5);
+                2
+            }
+            0xEB => {
+                self.registers.e = self.set(self.registers.e, 5);
+                2
+            }
+            0xEC => {
+                self.registers.h = self.set(self.registers.h, 5);
+                2
+            }
+            0xED => {
+                self.registers.l = self.set(self.registers.l, 5);
+                2
+            }
+            0xEE => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                self.set(data, 5);
+                4
+            }
+            0xEF => {
+                self.registers.a = self.set(self.registers.a, 5);
+                2
+            }
+            0xF0 => {
+                self.registers.b = self.set(self.registers.b, 6);
+                2
+            }
+            0xF1 => {
+                self.registers.c = self.set(self.registers.c, 6);
+                2
+            }
+            0xF2 => {
+                self.registers.d = self.set(self.registers.d, 6);
+                2
+            }
+            0xF3 => {
+                self.registers.e = self.set(self.registers.e, 6);
+                2
+            }
+            0xF4 => {
+                self.registers.h = self.set(self.registers.h, 6);
+                2
+            }
+            0xF5 => {
+                self.registers.l = self.set(self.registers.l, 6);
+                2
+            }
+            0xF6 => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                let reset = self.set(data, 6);
+                self.mmu.write_byte(address, reset);
+                4
+            }
+            0xF7 => {
+                self.registers.a = self.set(self.registers.a, 6);
+                2
+            }
+            0xF8 => {
+                self.registers.b = self.set(self.registers.b, 7);
+                2
+            }
+            0xF9 => {
+                self.registers.c = self.set(self.registers.c, 7);
+                2
+            }
+            0xFA => {
+                self.registers.d = self.set(self.registers.d, 7);
+                2
+            }
+            0xFB => {
+                self.registers.e = self.set(self.registers.e, 7);
+                2
+            }
+            0xFC => {
+                self.registers.h = self.set(self.registers.h, 7);
+                2
+            }
+            0xFD => {
+                self.registers.l = self.set(self.registers.l, 7);
+                2
+            }
+            0xFE => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                self.set(data, 7);
+                4
+            }
+            0xFF => {
+                self.registers.a = self.set(self.registers.a, 7);
+                2
+            }
         }
     }
 }
