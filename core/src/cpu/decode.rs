@@ -1668,6 +1668,282 @@ impl super::CPU {
                 self.bit(self.registers.a, 7);
                 2
             }
+            0x80 => {
+                self.registers.b = self.res(self.registers.b, 0);
+                2
+            }
+            0x81 => {
+                self.registers.c = self.res(self.registers.c, 0);
+                2
+            }
+            0x82 => {
+                self.registers.d = self.res(self.registers.d, 0);
+                2
+            }
+            0x83 => {
+                self.registers.e = self.res(self.registers.e, 0);
+                2
+            }
+            0x84 => {
+                self.registers.h = self.res(self.registers.h, 0);
+                2
+            }
+            0x85 => {
+                self.registers.l = self.res(self.registers.l, 0);
+                2
+            }
+            0x86 => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                let reset = self.res(data, 0);
+                self.mmu.write_byte(address, reset);
+                4
+            }
+            0x87 => {
+                self.registers.a = self.res(self.registers.a, 0);
+                2
+            }
+            0x88 => {
+                self.registers.b = self.res(self.registers.b, 1);
+                2
+            }
+            0x89 => {
+                self.registers.c = self.res(self.registers.c, 1);
+                2
+            }
+            0x8A => {
+                self.registers.d = self.res(self.registers.d, 1);
+                2
+            }
+            0x8B => {
+                self.registers.e = self.res(self.registers.e, 1);
+                2
+            }
+            0x8C => {
+                self.registers.h = self.res(self.registers.h, 1);
+                2
+            }
+            0x8D => {
+                self.registers.l = self.res(self.registers.l, 1);
+                2
+            }
+            0x8E => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                self.res(data, 1);
+                4
+            }
+            0x8F => {
+                self.registers.a = self.res(self.registers.a, 1);
+                2
+            }
+            0x90 => {
+                self.registers.b = self.res(self.registers.b, 2);
+                2
+            }
+            0x91 => {
+                self.registers.c = self.res(self.registers.c, 2);
+                2
+            }
+            0x92 => {
+                self.registers.d = self.res(self.registers.d, 2);
+                2
+            }
+            0x93 => {
+                self.registers.e = self.res(self.registers.e, 2);
+                2
+            }
+            0x94 => {
+                self.registers.h = self.res(self.registers.h, 2);
+                2
+            }
+            0x95 => {
+                self.registers.l = self.res(self.registers.l, 2);
+                2
+            }
+            0x96 => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                let reset = self.res(data, 2);
+                self.mmu.write_byte(address, reset);
+                4
+            }
+            0x97 => {
+                self.registers.a = self.res(self.registers.a, 2);
+                2
+            }
+            0x98 => {
+                self.registers.b = self.res(self.registers.b, 3);
+                2
+            }
+            0x99 => {
+                self.registers.c = self.res(self.registers.c, 3);
+                2
+            }
+            0x9A => {
+                self.registers.d = self.res(self.registers.d, 3);
+                2
+            }
+            0x9B => {
+                self.registers.e = self.res(self.registers.e, 3);
+                2
+            }
+            0x9C => {
+                self.registers.h = self.res(self.registers.h, 3);
+                2
+            }
+            0x9D => {
+                self.registers.l = self.res(self.registers.l, 3);
+                2
+            }
+            0x9E => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                self.res(data, 3);
+                4
+            }
+            0x9F => {
+                self.registers.a = self.res(self.registers.a, 3);
+                2
+            }
+            0xA0 => {
+                self.registers.b = self.res(self.registers.b, 4);
+                2
+            }
+            0xA1 => {
+                self.registers.c = self.res(self.registers.c, 4);
+                2
+            }
+            0xA2 => {
+                self.registers.d = self.res(self.registers.d, 4);
+                2
+            }
+            0xA3 => {
+                self.registers.e = self.res(self.registers.e, 4);
+                2
+            }
+            0xA4 => {
+                self.registers.h = self.res(self.registers.h, 4);
+                2
+            }
+            0xA5 => {
+                self.registers.l = self.res(self.registers.l, 4);
+                2
+            }
+            0xA6 => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                let reset = self.res(data, 4);
+                self.mmu.write_byte(address, reset);
+                4
+            }
+            0xA7 => {
+                self.registers.a = self.res(self.registers.a, 4);
+                2
+            }
+            0xA8 => {
+                self.registers.b = self.res(self.registers.b, 5);
+                2
+            }
+            0xA9 => {
+                self.registers.c = self.res(self.registers.c, 5);
+                2
+            }
+            0xAA => {
+                self.registers.d = self.res(self.registers.d, 5);
+                2
+            }
+            0xAB => {
+                self.registers.e = self.res(self.registers.e, 5);
+                2
+            }
+            0xAC => {
+                self.registers.h = self.res(self.registers.h, 5);
+                2
+            }
+            0xAD => {
+                self.registers.l = self.res(self.registers.l, 5);
+                2
+            }
+            0xAE => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                self.res(data, 5);
+                4
+            }
+            0xAF => {
+                self.registers.a = self.res(self.registers.a, 5);
+                2
+            }
+            0xB0 => {
+                self.registers.b = self.res(self.registers.b, 6);
+                2
+            }
+            0xB1 => {
+                self.registers.c = self.res(self.registers.c, 6);
+                2
+            }
+            0xB2 => {
+                self.registers.d = self.res(self.registers.d, 6);
+                2
+            }
+            0xB3 => {
+                self.registers.e = self.res(self.registers.e, 6);
+                2
+            }
+            0xB4 => {
+                self.registers.h = self.res(self.registers.h, 6);
+                2
+            }
+            0xB5 => {
+                self.registers.l = self.res(self.registers.l, 6);
+                2
+            }
+            0xB6 => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                let reset = self.res(data, 6);
+                self.mmu.write_byte(address, reset);
+                4
+            }
+            0xB7 => {
+                self.registers.a = self.res(self.registers.a, 6);
+                2
+            }
+            0xB8 => {
+                self.registers.b = self.res(self.registers.b, 7);
+                2
+            }
+            0xB9 => {
+                self.registers.c = self.res(self.registers.c, 7);
+                2
+            }
+            0xBA => {
+                self.registers.d = self.res(self.registers.d, 7);
+                2
+            }
+            0xBB => {
+                self.registers.e = self.res(self.registers.e, 7);
+                2
+            }
+            0xBC => {
+                self.registers.h = self.res(self.registers.h, 7);
+                2
+            }
+            0xBD => {
+                self.registers.l = self.res(self.registers.l, 7);
+                2
+            }
+            0xBE => {
+                let address = self.registers.hl();
+                let data = self.mmu.read_byte(address);
+                self.res(data, 7);
+                4
+            }
+            0xBF => {
+                self.registers.a = self.res(self.registers.a, 7);
+                2
+            }
 
             _ => unimplemented!("Unkown instruction found for: 0xCB{:x}", op),
         }

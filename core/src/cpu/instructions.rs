@@ -206,6 +206,11 @@ impl super::CPU {
         self.mmu.write_word(self.registers.sp, value);
     }
 
+    /// Reset bit in register.
+    pub fn res(&mut self, register: u8, value: u8) -> u8 {
+        let result = register & !(1 << value);
+        result
+    }
     /// Update PC register to return to instruction stored on the stack.
     pub fn ret(&mut self) {
         self.registers.pc = self.pop();
