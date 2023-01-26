@@ -1,3 +1,5 @@
+use super::ImeFlag;
+
 impl super::CPU {
     /// Decode op code and execute instruction. Returns how many clocks were necessary to run the instruction.
     pub fn execute(&mut self, op: u8) -> u32 {
@@ -518,7 +520,10 @@ impl super::CPU {
                 self.mmu.write_byte(address, self.registers.l);
                 2
             }
-            0x76 => unimplemented!("HALT not implemented yet"),
+            0x76 => {
+                self.halt = true;
+                1
+            }
             0x77 => {
                 let address = self.registers.hl();
                 self.mmu.write_byte(address, self.registers.a);
@@ -959,7 +964,7 @@ impl super::CPU {
             }
             0xD9 => {
                 self.ret();
-                self.ime = true;
+                self.ime = ImeFlag::Enabled;
                 4
             }
             0xDA => {
@@ -1055,6 +1060,10 @@ impl super::CPU {
                 self.registers.set_af(value);
                 3
             }
+            0xF3 => {
+                self.ime = ImeFlag::WillDisable;
+                1
+            }
             0xF2 => {
                 let address = self.mmu.io_ports_address + (self.registers.c as u16);
                 let data = self.mmu.read_byte(address);
@@ -1100,6 +1109,10 @@ impl super::CPU {
                 self.registers.a = data;
                 4
             }
+            0xFB => {
+                self.ime = ImeFlag::WillEnable;
+                1
+            }
             0xFE => {
                 let value = self.fetch_byte();
                 self.cp(value);
@@ -1115,6 +1128,7 @@ impl super::CPU {
     }
 
     pub fn execute_cb(&mut self, op: u8) -> u32 {
+        let op = self.fetch_byte();
         match op {
             0x00 => {
                 self.registers.b = self.rlc(self.registers.b);
