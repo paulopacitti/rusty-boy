@@ -1,5 +1,3 @@
-use super::ImeFlag;
-
 impl super::CPU {
     /// Decode op code and execute instruction. Returns how many clocks were necessary to run the instruction.
     pub fn execute(&mut self, op: u8) -> u32 {
@@ -964,7 +962,7 @@ impl super::CPU {
             }
             0xD9 => {
                 self.ret();
-                self.ime = ImeFlag::Enabled;
+                self.ime = true;
                 4
             }
             0xDA => {
@@ -1061,7 +1059,7 @@ impl super::CPU {
                 3
             }
             0xF3 => {
-                self.ime = ImeFlag::WillDisable;
+                self.ime_timer.di = 2;
                 1
             }
             0xF2 => {
@@ -1110,7 +1108,7 @@ impl super::CPU {
                 4
             }
             0xFB => {
-                self.ime = ImeFlag::WillEnable;
+                self.ime_timer.ei = 2;
                 1
             }
             0xFE => {

@@ -4,18 +4,23 @@ mod decode;
 mod instructions;
 mod registers;
 
-pub enum ImeFlag {
-    Enabled,
-    Disabled,
-    WillEnable,
-    WillDisable,
+pub struct ImeFlagTimer {
+    pub ei: u8,
+    pub di: u8,
+}
+
+impl ImeFlagTimer {
+    pub fn new() -> Self {
+        ImeFlagTimer { ei: 0, di: 0 }
+    }
 }
 
 pub struct CPU {
-    ime: ImeFlag,
-    registers: registers::Registers,
-    mmu: Memory,
     halt: bool,
+    ime: bool,
+    ime_timer: ImeFlagTimer,
+    mmu: Memory,
+    registers: registers::Registers,
 }
 
 impl CPU {
@@ -23,7 +28,8 @@ impl CPU {
         CPU {
             registers: registers::Registers::new(),
             mmu: Memory::new(),
-            ime: ImeFlag::Enabled,
+            ime: true,
+            ime_timer: ImeFlagTimer::new(),
             halt: false,
         }
     }
@@ -52,11 +58,24 @@ impl CPU {
     }
 
     fn update_ime(&mut self) {
-        match self.ime {
-            ImeFlag::WillEnable => self.ime = ImeFlag::Enabled,
-            ImeFlag::WillDisable => self.ime = ImeFlag::Disabled,
+        self.ime_timer.ei = match self.ime_timer.ei {
+            2 => 1,
+            1 => {
+                self.ime = true;
+                0
+            }
 
-            _ => return,
-        }
+            _ => 0,
+        };
+
+        self.ime_timer.di = match self.ime_timer.ei {
+            2 => 1,
+            1 => {
+                self.ime = false;
+                0
+            }
+
+            _ => 0,
+        };
     }
 }
