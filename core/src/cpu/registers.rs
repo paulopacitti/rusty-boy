@@ -120,3 +120,25 @@ impl Registers {
         self.l = (value & 0xFF) as u8;
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_set_bc() {
+        let mut registers = Registers::new();
+        registers.set_bc(0b1010_1111_1100_1100);
+        assert_eq!(registers.b, 0b1010_1111u8);
+        assert_eq!(registers.c, 0b1100_1100u8);
+    }
+
+    #[test]
+    fn test_set_f_as_u8() {
+        let mut registers = Registers::new();
+        let value = 0b1100_0000;
+        registers.f = Flags(value.into());
+        let result: u8 = registers.f.0;
+        assert_eq!(result, value);
+    }
+}
