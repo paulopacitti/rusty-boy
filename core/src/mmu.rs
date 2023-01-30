@@ -13,35 +13,49 @@
 // FFFF        Interrupt Enable Register
 //
 
-pub struct Memory {
-    memory: [u8; 0xFFFF],
-    pub io_ports_address: u16,
+use crate::{memory::Memory, ppu::PPU};
+
+pub const IO_REGISTERS_BEGIN: u16 = 0xFF00;
+pub const IO_REGISTERS_END: u16 = 0xFF7F;
+
+pub const OAM_BEGIN: u16 = 0xFE00;
+pub const OAM_END: u16 = 0xFE9F;
+pub const OAM_SIZE: u16 = OAM_END - OAM_BEGIN + 1;
+
+pub const VRAM_BEGIN: u16 = 0x8000;
+pub const VRAM_END: u16 = 0x9FFF;
+pub const VRAM_SIZE: u16 = VRAM_END - VRAM_BEGIN + 1;
+
+pub const WRAM_BEGIN: u16 = 0xC000;
+pub const WRAM_END: u16 = 0xDFFF;
+pub const WRAM_SIZE: u16 = WRAM_END - WRAM_BEGIN + 1;
+
+pub struct MMU {
+    ppu: PPU,
+    wram: [u8; 0x2000],
 }
 
-impl Memory {
-    const IO_PORTS_ADDRESS: u16 = 0xFF00;
+impl Memory for MMU {
+    fn read_byte(&self, address: u16) -> u8 {
+        match address {
+            WRAM_BEGIN..=WRAM_END => self.wram[address as usize],
+            VRAM_BEGIN..=VRAM_END => self.ppu.read_byte(address),
 
-    pub fn new() -> Self {
-        Memory {
-            memory: [0; 0xFFFF],
-            io_ports_address: Self::IO_PORTS_ADDRESS,
+            _ => 0,
+        };
+        self.wram[address as usize]
+    }
+
+    fn write_byte(&mut self, address: u16, value: u8) {
+        self.wram[address as usize] = value;
+    }
+}
+
+impl MMU {
+    pub fn new(ppu: PPU) -> Self {
+        MMU {
+            wram: [0; 0x2000],
+            ppu: ppu,
         }
-    }
-
-    pub fn read_byte(&self, address: u16) -> u8 {
-        self.memory[address as usize]
-    }
-
-    pub fn read_word(&mut self, address: u16) -> u16 {
-        (self.read_byte(address) as u16) | ((self.read_byte(address + 1) as u16) << 8)
-    }
-
-    pub fn write_byte(&mut self, address: u16, value: u8) {
-        self.memory[address as usize] = value;
-    }
-
-    pub fn write_word(&mut self, address: u16, value: u16) {
-        self.write_byte(address, (value & 0xFF) as u8);
-        self.write_byte(address + 1, (value >> 8) as u8);
     }
 }

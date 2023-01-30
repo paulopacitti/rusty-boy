@@ -1,3 +1,5 @@
+use crate::{memory::Memory, mmu::IO_REGISTERS_BEGIN};
+
 impl super::CPU {
     /// Decode op code and execute instruction. Returns how many clocks were necessary to run the instruction.
     pub fn execute(&mut self, op: u8) -> u32 {
@@ -992,7 +994,7 @@ impl super::CPU {
             }
             0xE0 => {
                 let partial_address = self.fetch_byte();
-                let address = self.mmu.io_ports_address | partial_address as u16;
+                let address = IO_REGISTERS_BEGIN | partial_address as u16;
                 let data = self.registers.a;
                 self.mmu.write_byte(address, data);
                 3
@@ -1003,7 +1005,7 @@ impl super::CPU {
                 3
             }
             0xE2 => {
-                let address = self.mmu.io_ports_address + (self.registers.c as u16);
+                let address = IO_REGISTERS_BEGIN + (self.registers.c as u16);
                 let data = self.registers.a;
                 self.mmu.write_byte(address, data);
                 2
@@ -1048,7 +1050,7 @@ impl super::CPU {
             }
             0xF0 => {
                 let partial_address = self.fetch_byte();
-                let address = self.mmu.io_ports_address | partial_address as u16;
+                let address = IO_REGISTERS_BEGIN | partial_address as u16;
                 let data = self.mmu.read_byte(address);
                 self.registers.a = data;
                 3
@@ -1063,7 +1065,7 @@ impl super::CPU {
                 1
             }
             0xF2 => {
-                let address = self.mmu.io_ports_address + (self.registers.c as u16);
+                let address = IO_REGISTERS_BEGIN + (self.registers.c as u16);
                 let data = self.mmu.read_byte(address);
                 self.registers.a = data;
                 2

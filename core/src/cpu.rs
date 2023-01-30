@@ -1,4 +1,4 @@
-use crate::mmu::Memory;
+use crate::{memory::Memory, mmu::MMU};
 
 mod decode;
 mod instructions;
@@ -19,15 +19,15 @@ pub struct CPU {
     halt: bool,
     ime: bool,
     ime_timer: ImeFlagTimer,
-    mmu: Memory,
+    mmu: MMU,
     registers: registers::Registers,
 }
 
 impl CPU {
-    pub fn new() -> Self {
+    pub fn new(mmu: MMU) -> Self {
         CPU {
             registers: registers::Registers::new(),
-            mmu: Memory::new(),
+            mmu: mmu,
             ime: true,
             ime_timer: ImeFlagTimer::new(),
             halt: false,

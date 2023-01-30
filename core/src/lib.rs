@@ -1,9 +1,15 @@
 mod cpu;
+mod memory;
 mod mmu;
+mod ppu;
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
+
+pub fn run() {}
+
+pub fn tick() {}
 
 #[cfg(test)]
 mod tests {
