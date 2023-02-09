@@ -20,15 +20,12 @@ pub const IO_REGISTERS_END: u16 = 0xFF7F;
 
 pub const OAM_BEGIN: u16 = 0xFE00;
 pub const OAM_END: u16 = 0xFE9F;
-pub const OAM_SIZE: u16 = OAM_END - OAM_BEGIN + 1;
 
 pub const VRAM_BEGIN: u16 = 0x8000;
 pub const VRAM_END: u16 = 0x9FFF;
-pub const VRAM_SIZE: u16 = VRAM_END - VRAM_BEGIN + 1;
 
 pub const WRAM_BEGIN: u16 = 0xC000;
 pub const WRAM_END: u16 = 0xDFFF;
-pub const WRAM_SIZE: u16 = WRAM_END - WRAM_BEGIN + 1;
 
 pub struct MMU {
     ppu: PPU,
@@ -40,14 +37,22 @@ impl Memory for MMU {
         match address {
             WRAM_BEGIN..=WRAM_END => self.wram[address as usize],
             VRAM_BEGIN..=VRAM_END => self.ppu.read_byte(address),
+            OAM_BEGIN..=OAM_END => self.ppu.read_byte(address),
+            0xFF40..=0xFF4B => self.ppu.read_byte(address),
 
-            _ => 0,
-        };
-        self.wram[address as usize]
+            _ => panic!("Unable to read from this address from the MMU"),
+        }
     }
 
     fn write_byte(&mut self, address: u16, value: u8) {
-        self.wram[address as usize] = value;
+        match address {
+            WRAM_BEGIN..=WRAM_END => self.wram[address as usize] = value,
+            VRAM_BEGIN..=VRAM_END => self.ppu.write_byte(address, value),
+            OAM_BEGIN..=OAM_END => self.ppu.write_byte(address, value),
+            0xFF40..=0xFF4B => self.ppu.write_byte(address, value),
+
+            _ => panic!("Unable to read from this address from the MMU"),
+        }
     }
 }
 
